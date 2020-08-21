@@ -1,0 +1,110 @@
+---
+title: "Untitled"
+author: "Pradeepti"
+date: "5/28/2020"
+output: html_document
+---
+```{r}
+require(tidyverse)
+
+```
+
+```{r}
+df=read_csv('R:\\LEARN\\Data analyst training\\Cars.csv')
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+summary(df)
+```
+
+plotting to find multicollinearity of the i/p variables. So, VOL-WT, HP-SP have multicollinearity.
+```{r}
+#plot(df)
+pairs(df)
+```
+
+```{r}
+cor(df$HP, df$MPG)
+cor(df$HP, df$VOL)
+cor(df$HP, df$SP)
+cor(df$HP, df$WT)
+
+```
+
+Building a basic model. p value for vol and wt is higher than 0.05. so they are not significant.
+```{r}
+m1=lm(MPG~HP+VOL+SP+WT, data = df)
+summary(m1)
+```
+
+building seperate models for vol and wt, they are significant
+```{r}
+mv = lm(MPG~VOL, data = df)
+summary(mv)
+```
+
+```{r}
+mw=lm(MPG~WT, data = df)
+summary(mw)
+```
+
+building a model combining vol+wt, both became insignificant. So independently they are ok, combined, they become insignificant.
+```{r}
+mvw = lm(MPG ~ VOL + WT, data = df)
+summary(mvw)
+```
+
+installed car and mvinfluence packages
+```{r}
+require(car)
+require(mvinfluence)
+```
+
+plotting influence plot to identify the problematic records. StudRes> +or-2 and Cooks distance>0.5 for rows 1, 71, 77
+```{r}
+influencePlot(m1)
+```
+
+building model after removing the 3 records, still not significant
+```{r}
+nm = lm(MPG ~ HP + VOL + SP + WT, data = df[-c(1,71,77),])
+summary(nm)
+```
+
+trying VIF, wt has highest value. so building a model without wt
+```{r}
+vif(nm)
+```
+
+model without wt
+```{r}
+fm = lm(MPG ~ HP + VOL + SP, data = df)
+summary(fm)
+```
+
+trying AV Plot 
+```{r}
+avPlots(m1)
+avPlots(fm)
+```
+vif for final model
+```{r}
+vif(fm)
+```
+
+predicting values
+```{r}
+pv = predict(fm, data = df)
+pv = as.data.frame(pv)
+pv
+```
+
+```{r}
+data = data.frame(pv, df)
+data
+```
+

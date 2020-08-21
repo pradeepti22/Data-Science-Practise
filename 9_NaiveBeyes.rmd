@@ -1,0 +1,150 @@
+---
+title: "Naive Bayes with text mining"
+author: "Pradeepti"
+date: "7/16/2020"
+output: html_document
+---
+
+```{r}
+#install.packages("tm") #tm = text mining
+require(tm)
+```
+
+Loading the dataset. stringsAsFactors = F means that it should not consider each text data as a factor. 
+```{r}
+df = read.csv("R:\\LEARN\\Data analyst training\\sms.csv", stringsAsFactors = F)
+```
+
+type = o/p and text = i/p variable for the dataset. so based on the text data we need to classify the type as ham/spam
+```{r}
+str(df)
+summary(df)
+```
+
+converting type variable to a factor type
+```{r}
+df$type = factor(df$type)
+head(df)
+```
+
+getting the no. of times we have ham and spam
+```{r}
+table(df$type)
+```
+
+preparing corpus for text mining. we add all the 5558 documents in one corpus using Corpus() from tm library. the resulting corpus is a corpus type datatype.
+function(x) means for each work in the corpus. 
+iconv to enc2utf8 means encode to unicode transformation format with 8 bytes (like machine understandable 0s and 1s)
+```{r}
+smscorp = Corpus(VectorSource(df$text))
+smscorp = tm_map(smscorp, function(x) iconv(enc2utf8(x), sub = 'byte'))
+class(smscorp)
+```
+
+cleaning the corpus: removing upper/lower case inconsistencies, numbers, stopwords, punctuation, extra spaces, etc
+```{r}
+cleancorp = tm_map(smscorp, tolower)
+cleancorp = tm_map(cleancorp, removeNumbers)
+cleancorp = tm_map(cleancorp, removeWords, stopwords())
+cleancorp = tm_map(cleancorp, removePunctuation)
+cleancorp = tm_map(cleancorp, stripWhitespace)
+class(cleancorp)
+```
+
+converting the data back to character type as we are done with cleaning
+```{r}
+as.character(cleancorp)
+```
+
+creating a DTM (Document term matrix). so the dtm is of type dtm/simple triplet matrix, and now has 5558 documents(rows) with 7933 terms(columns)
+```{r}
+dtm = DocumentTermMatrix(cleancorp)
+class(dtm)
+head(dtm)
+```
+
+converting the dtm to char type
+```{r}
+as.character(dtm)
+```
+
+creating test and train sets of all 3 datasets:raw data, corpus, dtm. 
+so each train set will have 4169 rows with 7933 columns, test set will have 1389 rows with 7933 columns
+```{r}
+#original raw data
+rawtrain = df[1:4169, ]
+rawtest = df[4170:5558, ]
+
+#dtm data
+dtmtrain = dtm[1:4169, ]
+dtmtest = dtm[4170:5558, ]
+
+#corpus data
+corpustrain = cleancorp[1:4169]
+corpustest = cleancorp[4170:5558]
+```
+
+checking for proportion of spam and ham over total records
+```{r}
+prop.table(table(rawtrain$type))
+prop.table(table(rawtest$type))
+```
+
+creating a dictionary of words that repeated more than 20 times in all the 7933 words = results =320 words
+```{r}
+dict = findFreqTerms(dtmtrain, 20)
+
+```
+
+now we are checking if the 7933 words in corpus sets match with the dict words(most used words) that we have. then we take those words in the train and test variables. so train will have 4169 docs in 320 terms, test will have 1389 docs in 320 terms
+```{r}
+train = DocumentTermMatrix(corpustrain, list(dictionary = dict))
+test = DocumentTermMatrix(corpustest, list(dictionary = dict))
+
+```
+
+converting counts to a factor. function(x)= for each word. 
+so for every word, if the word is used >0(atleast once), then mark 1, else 0.
+then convert that to a factor and provide labels
+```{r}
+convert_counts = function(x){
+  x = ifelse(x>0, 1, 0)
+  x = factor(x, levels = c(0,1), labels = c("No", "Yes"))
+}
+convert_counts
+```
+
+applying convert_counts() to train and test sets. margin = 2 means dtm, margin = 1 means tdm. 
+now the feilds are marked with yes/no in the entire dataset
+```{r}
+train = apply(train, MARGIN = 2, convert_counts)
+test = apply(test, MARGIN = 2, convert_counts)
+```
+
+applying naive beyes. install package e1071
+```{r}
+require(e1071)
+m1 = naiveBayes(train, rawtrain$type)
+```
+
+evaluating model performance
+```{r}
+pv = predict(m1, test)
+```
+
+accuracy and crosstable
+```{r}
+#library(gmodels)
+CrossTable(rawtest$type, pv)
+
+```
+
+(1197+146)/1389 = 0.9668
+```{r}
+mean(pv == rawtest$type)
+```
+
+```{r}
+
+```
+

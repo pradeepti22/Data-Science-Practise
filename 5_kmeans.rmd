@@ -1,0 +1,35 @@
+---
+title: "K-means"
+author: "Pradeepti"
+date: "7/10/2020"
+output: html_document
+---
+
+```{r}
+require(tidyverse)
+require(dplyr)
+```
+
+generating a dataset with random variables and combining them. plotting the data points. text() helps displays the data names in the plot(not done in real time)
+```{r}
+x = runif(50)
+y = runif(50)
+data = cbind(x,y)
+plot(data, type = 'n')
+text(data, rownames(data))
+```
+
+building a k means model with 4 clusters. Always, withinss should be less, betweenss should be more. 
+```{r}
+m1 = kmeans(data, 4)
+str(m1)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+

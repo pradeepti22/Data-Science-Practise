@@ -1,0 +1,64 @@
+---
+title: "DECISION TREES"
+author: "Pradeepti"
+date: "7/10/2020"
+output: html_document
+---
+installing packages tree and C50 for decision trees. caret package is to split data into test and training set
+```{r}
+install.packages("tree")
+install.packages("C50")
+install.packages("caret")
+require(C50)
+require(caret)
+```
+
+data() shows all available datsets. choosing iris dataset to work on
+```{r}
+#data()
+iris
+```
+
+using caret package to split data to test(30%) and train set(70%)
+```{r}
+intrain = createDataPartition(y = iris$Species, p = 0.70, list = FALSE)
+traindf = iris[intrain,]
+testdf = iris[-intrain,]
+```
+
+building a model in train data. format is C5.0(x,y)
+```{r}
+#m1 = C5.0(traindf[,-5], traindf[,5]) 
+m1 = C5.0(traindf[,-5], traindf$Species)
+plot(m1)
+```
+
+checking train df accuracy. 98%
+```{r}
+table(traindf$Species)
+table(predict(m1, traindf))
+mean(traindf$Species == predict(m1, traindf))
+```
+
+building model for test set
+```{r}
+m2 = C5.0(testdf[,-5], testdf$Species)
+plot(m2)
+```
+
+checking test set accuracy
+```{r}
+mean(testdf$Species == predict(m2, testdf))
+```
+
+comparing actual and predicted values with cross table. gmodels package is needed
+```{r}
+install.packages("gmodels")
+require(gmodels)
+```
+
+```{r}
+#summary(iris)
+CrossTable(testdf$Species, predict(m2, testdf))
+```
+

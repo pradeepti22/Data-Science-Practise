@@ -1,0 +1,74 @@
+---
+title: "Untitled"
+author: "Pradeepti"
+date: "6/2/2020"
+output: html_document
+---
+```{r}
+require(tidyverse)
+```
+
+loading the dataset
+```{r}
+df = read_csv("claimants.csv")
+```
+
+```{r}
+str(df)
+```
+
+summary. there are NA values in some columns. doing na.omit removes the missing values. but when we build the model, it automatically removes NAs. 
+```{r}
+summary(df)
+```
+
+```{r}
+new = na.omit(df)
+summary(new)
+```
+
+building the logistic regression model. converting the categorical data as factors. 
+seatbelt and age are not significant acc. to this model.
+also, null deviance > residual, so i/p variables are relavent to o/p variable.
+```{r}
+m1 = glm (ATTORNEY ~ factor(CLMSEX) + factor(CLMINSUR) + factor(SEATBELT) + CLMAGE + LOSS, family = binomial, data = df)
+summary(m1)
+```
+
+
+```{r}
+coef(m1)
+```
+
+o/p is now in log values, so taking exp to get original values. 
+```{r}
+exp(coef(m1))
+```
+predicting
+```{r}
+prob = predict(m1, data = df)
+pvprob = as.data.frame(prob)
+pvprob
+```
+
+the original df has null values but the pv values excluded them. so do cbind to the new df which had the null values removed. 
+```{r}
+cbind(pvprob, new)
+```
+
+```{r}
+table(new$ATTORNEY)
+table(df$ATTORNEY)
+```
+building confusion matrix for actual and predicted values. TRUES = 485 + 93 = 578, FALSE = 260 + 258 = 518
+```{r}
+table(prob >=0.5)
+conf = table(new$ATTORNEY, prob >=0.5)
+conf
+```
+
+calculating the accuracy, 67%
+```{r}
+acc = sum(diag(conf))/sum(conf)
+acc
+```

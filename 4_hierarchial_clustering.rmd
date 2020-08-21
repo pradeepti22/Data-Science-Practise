@@ -1,0 +1,74 @@
+---
+title: "Hierarchical Clustering"
+author: "Pradeepti"
+date: "7/1/2020"
+output: html_document
+---
+```{r}
+require(tidyverse)
+```
+
+```{r}
+df = read_csv("R:\\LEARN\\Data analyst training\\Universities.csv")
+```
+
+data columns have scaling issues.
+```{r}
+#str(df)
+summary(df)
+```
+
+normalizing the data. excluding 1st column as it is not numeric
+```{r}
+norm_df = scale(df[,2:7])
+norm_df
+```
+
+calculating the euclidean distance
+```{r}
+d = dist(norm_df, method = 'euclidean')
+d
+```
+
+building the hierarchical cluster model
+```{r}
+m1 = hclust(d, method = 'complete')
+plot(m1, hang = -1)
+```
+
+cutting the clusters with cluster numbers for all records
+```{r}
+clusters = cutree(m1, k = 5)
+clusters = as.data.frame(clusters)
+```
+
+adding borders to dendrogram
+```{r}
+plot(m1, hang = -1)
+rect.hclust(m1, k = 5, border = 'purple')
+```
+
+combining cluster number to original dataframe
+```{r}
+final_df = cbind(clusters, df)
+final_df
+```
+
+finding the means to know the avg values of each column.
+```{r}
+aggregate(final_df[,3:8], by = list(final_df$clusters), FUN = mean)
+#final_df %>% group_by(final_df$clusters) %>% summarise(final_df[,3:8] = mean(final_df[3:8]))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+

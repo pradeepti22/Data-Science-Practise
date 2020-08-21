@@ -1,0 +1,109 @@
+---
+title: "Untitled"
+output: html_document
+---
+```{r}
+require(dplyr)
+require(tidyverse)
+require(ggplot2)
+```
+
+
+loading the dataset. to predict the fat based on waist circumference(without a CT scan)
+```{r}
+df=read_csv("R:\\LEARN\\Data analyst training\\fat.csv")
+```
+
+exploring the dataset
+```{r}
+str(df)
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+head(df,3)
+colnames(df)
+```
+
+```{r}
+attach(df)
+#plot(waist, fat)
+cor(waist, fat)
+```
+
+```{r}
+colSums(df)
+
+sd(df$fat)
+sd(df$waist)
+```
+
+building a ML model using linear regression: accuracy 67% and significant p value.
+```{r}
+m1=lm(fat~waist, data=df)
+summary(m1)
+```
+
+applying exponential transformation on fat(y) to improve accuracy: accuracy 70%
+```{r}
+em1=lm(log(fat)~waist, data = df)
+summary(em1)
+```
+
+predicting values of y, given x
+```{r}
+Predicted_Value=predict(em1, data=df)
+as.data.frame(Predicted_Value)
+```
+
+combining the predicted values to orginal dataset
+```{r}
+new=cbind(df, Predicted_Value)
+new
+```
+
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
