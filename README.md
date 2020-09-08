@@ -1,1 +1,1 @@
-# Data-Science-Practise
+# Data-Science-Projects and case studies
