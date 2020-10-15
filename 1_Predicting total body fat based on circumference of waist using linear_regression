@@ -5,7 +5,7 @@ In this project, I have used the data points of waist circumference from the dat
 and made predictions on fat content based on the waist circumference. I did this in both R and Python
 ---
 
-In RStudio
+##In RStudio
 
 ---
 title: "Untitled"
@@ -74,7 +74,7 @@ new=cbind(df, Predicted_Value)
 new
 ```
 
-In Python using Jupyter notebooks
+##In Python using Jupyter notebooks
 
 #importing libraries
 import pandas as pd
