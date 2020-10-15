@@ -1,3 +1,4 @@
+In RStudio
 ---
 title: "Untitled"
 output: html_document
@@ -65,45 +66,5 @@ new=cbind(df, Predicted_Value)
 new
 ```
 
-```{r}
 
-
-```
-
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
 
