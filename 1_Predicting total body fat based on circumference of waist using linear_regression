@@ -1,4 +1,10 @@
 In RStudio
+
+Linear Regression is a Supervised ML algorithm. We use this to find continuous numeric relationship between data. 
+One dependent variable(Y) is checked against one or more independent variables(X) to find if there is a relationship between them. 
+Their relationship is explained in an equation y = mx + c. 
+In this project, I have used the data points of waist circumference from the dataset to build a Linear regression ML model 
+and made predictions on fat content based on the waist circumference. 
 ---
 title: "Untitled"
 output: html_document
