@@ -1,10 +1,12 @@
-In RStudio
-
 Linear Regression is a Supervised ML algorithm. We use this to find continuous numeric relationship between data. 
 One dependent variable(Y) is checked against one or more independent variables(X) to find if there is a relationship between them. 
 Their relationship is explained in an equation y = mx + c. 
 In this project, I have used the data points of waist circumference from the dataset to build a Linear regression ML model 
-and made predictions on fat content based on the waist circumference. 
+and made predictions on fat content based on the waist circumference. I did this in both R and Python
+---
+
+In RStudio
+
 ---
 title: "Untitled"
 output: html_document
@@ -18,7 +20,7 @@ require(ggplot2)
 
 loading the dataset. to predict the fat based on waist circumference(without a CT scan)
 ```{r}
-df=read_csv("R:\\LEARN\\Data analyst training\\fat.csv")
+df=read_csv("fat.csv")
 ```
 
 exploring the dataset
@@ -72,5 +74,40 @@ new=cbind(df, Predicted_Value)
 new
 ```
 
+In Python using Jupyter notebooks
 
+#importing libraries
+import pandas as pd
+import matplotlib.pyplot as mt
+import numpy as np
+import statsmodels.formula.api as sm
+
+#loading the dataset. trying to predict the fat content based on circumference of waist
+df = pd.read_csv("R:\\LEARN\\Data analyst training\\fat.csv")
+
+#exploring the dataset
+df.shape
+
+df.head()
+
+mt.plot(df.waist, df.fat, ".")
+
+#correlation
+df.waist.corr(df.fat)
+
+#building a linear regression model. accuracy is only 67%, p value <0.05, so variables are significant
+m1=sm.ols("fat~waist", data=df).fit()
+
+m1.summary()
+
+#enhancing the accuracy by using exponential transformation. accuracy increased to 70%. variables are significant. 
+m2 = sm.ols("np.log(fat)~waist", data = df). fit()
+m2.summary()
+
+p = m2.predict(df)
+
+#adding the predicted values as a column to original dataset
+df['Predicted'] = p
+
+df
 
